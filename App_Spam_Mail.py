@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import streamlit as st
+import plotly.express as px
 st.set_page_config(page_title = 'AI Spam Detector', layout = 'wide')
 st.title("📧 AI Spam Mail Detection System")
 raw_mail_data = pd.read_csv("mail_data.csv")
@@ -30,10 +31,17 @@ st.sidebar.metric("Safe emails: ", ham_count)
 spam_percent = round((spam_count/total_emails) * 100, 2)
 st.sidebar.write("Spam percentage: ", spam_percent, " %")
 st.subheader("📥 Email Inbox Simulator")
-sample_emails = mail_data.sample(5)
-for msg in sample_emails['Message']:
-  with st.expander("Open Email"):
-    st.write(msg)
+sample_emails = mail_data.sample(8)
+for i, row in sample_emails.iterrows():
+  col1, col2 = st.columns([1, 8])
+  with col1:
+    if row['Category'] == 0:
+      st.markdown("🚨")
+    else:
+      st.markdown("📩")
+  with col2:
+    with st.expander("Open Email: "):
+      st.write(row['Message'])
 st.subheader("🔍 Check an Email")
 input_mail = st.text_area("Paste email content:")
 if st.button("Detect Spam"):
