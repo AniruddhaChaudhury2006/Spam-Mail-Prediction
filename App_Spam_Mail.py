@@ -37,28 +37,34 @@ for msg in sample_emails['Message']:
 st.subheader("🔍 Check an Email")
 input_mail = st.text_area("Paste email content:")
 if st.button("Detect Spam"):
-  input_features = vectorizer.transform([input_mail])
-  prediction = model.predict(input_features)
-  probability = model.predict_proba(input_features)
-  spam_prob = probability[0][0]
-  ham_prob = probability[0][1]
-  if prediction[0] == 0:
-    st.error("🚨 Spam Email Detected")
+  if input_mail.strip() == '':
+    st.warning("⚠️ Please enter email content first.")
   else:
-    st.success("✅ Safe Email")
-  st.subheader("📊 Spam Probability")
-  st.progress(float(spam_prob))
-  st.write("Spam probability: ", round(spam_prob * 100, 2), " %")
-  st.write("Safe probability: ", round(ham_prob * 100, 2), " %")
-  st.subheader("🧠 Important Words")
-  feature_names = vectorizer.get_feature_names_out()
-  weights = model.coef_[0]
-  email_words = input_mail.split()
-  word_scores = []
-  for word in email_words:
-     if word in feature_names:
-      idx = list(feature_names).index(word)
-      word_scores.append((word, weights[idx]))
-  word_scores = sorted(word_scores, key = lambda x: abs(x[1]), reverse = True)[:10]
-  explain_df = pd.DataFrame(word_scores, columns = ["Word", "Importance"])
-  st.bar_chart(explain_df.set_index("Word"))
+    input_features = vectorizer.transform([input_mail])
+    prediction = model.predict(input_features)
+    probability = model.predict_proba(input_features)
+    spam_prob = probability[0][0]
+    ham_prob = probability[0][1]
+    if prediction[0] == 0:
+       st.error("🚨 Spam Email Detected")
+    else:
+       st.success("✅ Safe Email")
+    st.subheader("📊 Spam Probability")
+    st.progress(float(spam_prob))
+    st.write("Spam probability: ", round(spam_prob * 100, 2), " %")
+    st.write("Safe probability: ", round(ham_prob * 100, 2), " %")
+    st.subheader("🧠 Important Words")
+    feature_names = vectorizer.get_feature_names_out()
+    weights = model.coef_[0]
+    email_words = input_mail.split()
+    word_scores = []
+    for word in email_words:
+        if word in feature_names:
+           idx = list(feature_names).index(word)
+           word_scores.append((word, weights[idx]))
+    word_scores = sorted(word_scores, key = lambda x: abs(x[1]), reverse = True)[:10]
+    explain_df = pd.DataFrame(word_scores, columns = ["Word", "Importance"])
+    if not explain_df.empty:
+      st.bar_chart(explain_df.set_index("Word"))
+    else:
+      st.write("No important words detected")
