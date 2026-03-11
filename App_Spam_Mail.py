@@ -30,6 +30,10 @@ st.sidebar.metric("Spam emails: ", spam_count)
 st.sidebar.metric("Safe emails: ", ham_count)
 spam_percent = round((spam_count/total_emails) * 100, 2)
 st.sidebar.write("Spam percentage: ", spam_percent, " %")
+st.subheader("📊 Spam Analytics Dashboard")
+chart_data = pd.DataFrame({"Type" : ["Spam", "Safe"], "Count" : [spam_count, ham_count]})
+fig = px.pie(chart_data, values = "Count", names = "Type", title = "Spam vs Safe Emails")
+st.plotly_chart(fig, use_container_width = True)
 st.subheader("📥 Email Inbox Simulator")
 sample_emails = mail_data.sample(8)
 for i, row in sample_emails.iterrows():
@@ -40,19 +44,26 @@ for i, row in sample_emails.iterrows():
     else:
       st.markdown("📩")
   with col2:
-    with st.expander("Open Email: "):
+    with st.expander("Open Email"):
       st.write(row['Message'])
-st.subheader("🔍 Check an Email")
-input_mail = st.text_area("Paste email content:")
-if st.button("Detect Spam"):
+st.subheader("🔍 Live Email Security Scanner")
+col1, col2 = st.columns([3, 1])
+with col1:
+    input_mail = st.text_area("📩 Paste incoming email content", height = 150)
+with col2:
+    scan_button = st.button("🔎 Scan Email")
+st.markdown("-----")
+if scan_button:
   if input_mail.strip() == '':
     st.warning("⚠️ Please enter email content first.")
   else:
-    input_features = vectorizer.transform([input_mail])
-    prediction = model.predict(input_features)
-    probability = model.predict_proba(input_features)
-    spam_prob = probability[0][0]
-    ham_prob = probability[0][1]
+    with st.spinner("Scanning email for spam threats"):
+         input_features = vectorizer.transform([input_mail])
+         prediction = model.predict(input_features)
+         probability = model.predict_proba(input_features)
+         spam_prob = probability[0][0]
+         ham_prob = probability[0][1]
+    st.subheader("🧠AI Security Verdict")
     if prediction[0] == 0:
        st.error("🚨 Spam Email Detected")
     else:
