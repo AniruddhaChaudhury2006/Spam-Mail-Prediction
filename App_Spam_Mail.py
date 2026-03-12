@@ -116,21 +116,22 @@ if scan_button:
         labels=dict(x="Words", y="Impact", color="Spam Score"),
         x=explain_df["Word"].values
     )
+    st.plotly_chart(heatmap_fig, use_container_width=True)
+    else:
+        st.write("No heatmap data available")
+if scan_button:
+  st.subheader("📡 Live Spam Threat Radar")
 
-       st.plotly_chart(heatmap_fig, use_container_width=True)
-    
-st.subheader("📡 Live Spam Threat Radar")
+  radar_data = pd.DataFrame({
+        "Angle": list(range(0, 360, 10)),
+        "Threat": [random.randint(1,100) for i in range(36)]
+    })
 
-radar_data = pd.DataFrame({
-    "Angle": list(range(0, 360, 10)),
-    "Threat": [random.randint(1,100) for i in range(36)]
-})
+  radar_fig = px.line_polar(
+        radar_data,
+        r="Threat",
+        theta="Angle",
+        line_close=True
+    )
 
-radar_fig = px.line_polar(
-    radar_data,
-    r="Threat",
-    theta="Angle",
-    line_close=True
-)
-
-st.plotly_chart(radar_fig, use_container_width=True)
+  st.plotly_chart(radar_fig, use_container_width=True)
