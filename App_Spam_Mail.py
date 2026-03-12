@@ -6,6 +6,8 @@ from sklearn.linear_model import LogisticRegression
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+import time
+import random
 st.set_page_config(page_title = 'AI Spam Detector', layout = 'wide')
 st.title("📧 AI Spam Mail Detection System")
 raw_mail_data = pd.read_csv("mail_data.csv")
@@ -115,10 +117,8 @@ if scan_button:
         x=explain_df["Word"].values
     )
 
-    st.plotly_chart(heatmap_fig, use_container_width=True)
-    import time
-import random
-
+       st.plotly_chart(heatmap_fig, use_container_width=True)
+    
 st.subheader("📡 Live Spam Threat Radar")
 
 radar_data = pd.DataFrame({
