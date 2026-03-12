@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 st.set_page_config(page_title = 'AI Spam Detector', layout = 'wide')
 st.title("📧 AI Spam Mail Detection System")
 raw_mail_data = pd.read_csv("mail_data.csv")
@@ -87,3 +88,49 @@ if scan_button:
       st.bar_chart(explain_df.set_index("Word"))
     else:
       st.write("No important words detected")
+    st.subheader("🎯 AI Confidence Meter")
+    confidence = spam_prob * 100
+    fig = go.Figure(go.Indicator(
+    mode="gauge+number",
+    value=confidence,
+    title={'text': "Spam Threat Level"},
+    gauge={
+        'axis': {'range': [0, 100]},
+        'bar': {'thickness': 0.3},
+        'steps': [
+            {'range': [0, 30], 'color': "green"},
+            {'range': [30, 70], 'color': "yellow"},
+            {'range': [70, 100], 'color': "red"}
+        ]
+    }
+))
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.subheader("🔥 Spam Word Heatmap")
+
+    if not explain_df.empty:
+        heatmap_fig = px.imshow(
+        [explain_df["Importance"].values],
+        labels=dict(x="Words", y="Impact", color="Spam Score"),
+        x=explain_df["Word"].values
+    )
+
+    st.plotly_chart(heatmap_fig, use_container_width=True)
+    import time
+import random
+
+st.subheader("📡 Live Spam Threat Radar")
+
+radar_data = pd.DataFrame({
+    "Angle": list(range(0, 360, 10)),
+    "Threat": [random.randint(1,100) for i in range(36)]
+})
+
+radar_fig = px.line_polar(
+    radar_data,
+    r="Threat",
+    theta="Angle",
+    line_close=True
+)
+
+st.plotly_chart(radar_fig, use_container_width=True)
