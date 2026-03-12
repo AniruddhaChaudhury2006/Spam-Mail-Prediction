@@ -110,15 +110,15 @@ if scan_button:
     st.plotly_chart(fig, use_container_width=True)
     st.subheader("🔥 Spam Word Heatmap")
 
-   if not explain_df.empty:
-    heatmap_fig = px.imshow(
+    if not explain_df.empty:
+       heatmap_fig = px.imshow(
         [explain_df["Importance"].values],
         labels=dict(x="Words", y="Impact", color="Spam Score"),
         x=explain_df["Word"].values
     )
-    st.plotly_chart(heatmap_fig, use_container_width=True)
-   else:
-    st.write("No heatmap data available")
+       st.plotly_chart(heatmap_fig, use_container_width=True)
+    else:
+       st.write("No heatmap data available")
 if scan_button:
   st.subheader("📡 Live Spam Threat Radar")
 
